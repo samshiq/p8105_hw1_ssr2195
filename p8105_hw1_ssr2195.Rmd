@@ -1,29 +1,111 @@
 ---
-title: "p8105_hw1_ssr2195"
-output: github_document
+title: "Data Science 1 Homework 1"
+author: "Samina Rashiq"
 date: "2024-09-21"
+output: github_document
 ---
+```{r tidyverse, echo = FALSE, results = 'hide', message = FALSE, warning = FALSE}
+library(tidyverse)
+```
+# Problem 1
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+#### Load penguins dataset
+```{r penguins}
+data("penguins", package = "palmerpenguins")
 ```
 
-## R Markdown
+```{r echo=FALSE}
+# Name important variables
+num_rows <- nrow(penguins)
+num_cols <- ncol(penguins)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+# Calculate mean flipper length
+mean_flipper_length <- mean(penguins$flipper_length_mm, na.rm = TRUE)
 ```
 
-## Including Plots
+#### Describe penguins dataset
+```markdown
+The`penguins` dataset contains information about many types of penguins including the variables:
+- `species`: species of penguin (Adelie, Chinstrap,or Gentoo)
+- `island`: island where penguing was observed (Biscoe, Dream, or Torgersen)
+- `bill_length_mm` : length of penguin's bill in mm (mean = `r mean(penguins$bill_length_mm, na.rm = TRUE)`)
+- `bill_depth_mm`: depth of penguin's bill in mm (mean = `r mean(penguins$bill_depth_mm, na.rm = TRUE)`)
+- `flipper_length_mm`:length of penguin's flipper in mm (mean = `r mean(penguins$bill_depth_mm, na.rm = TRUE)`). 
+- `body_mass_g`: body mass of penguin in g (mean = `r mean(penguins$body_mass_g, na.rm = TRUE)`)
+- `sex`: The sex of the penguin in (male or female)
+- `year`: The year data was collected.
 
-You can also embed plots, for example:
+The `penguins` dataset contains `r num_rows` rows and `r num_cols` columns. The mean flipper length is `r mean_flipper_length` mm. 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```
+#### Make a scatterplot of flipper length vs. bill length
+```{r yx_scatter, echo = FALSE, warning=FALSE, message=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = flipper_length_mm, color = species)) +
+  geom_point() +
+  labs(
+    title = "Flipper length vs. bill length",
+    x = "Bill length (mm)",
+    y = "Flipper length (mm)",
+  )
+
+#Saving plot as image
+ggsave(
+  "scatterplot1.png",
+  plot = last_plot ()
+)
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Problem 2
+
+#### Create data frame
+```{r df_create}
+set.seed(420)
+
+problem2_df = tibble(
+  norm_samp = rnorm(10, mean = 0, sd = 1),
+  vec_logical = norm_samp > 0,
+  vec_char = sample(state.name, 10, replace = TRUE),
+  vec_factor = factor(
+    sample(
+      c("lvl1", "lvl2", "lvl3"), 10, replace = TRUE))
+)
+
+print(problem2_df)
+```
+
+#### Calculate the mean of each variable
+```{r}
+mean(pull(problem2_df, norm_samp))
+
+mean(pull(problem2_df, vec_logical))  
+
+mean(pull(problem2_df, vec_char)) 
+
+mean(pull(problem2_df, vec_factor))
+```
+
+#### Convert logical, character, and factor variables to numeric variables
+
+```{r means_calc,}
+num_logical <- as.numeric(pull(problem2_df, vec_logical))
+
+num_char <- as.numeric(pull(problem2_df, vec_char))
+
+num_factor <- as.numeric(pull(problem2_df, vec_factor))
+
+```
+R treats logical values as TRUE = 1 and FALSE = 0, which is why a mean could be calculated before conversion. 
+
+R can't change character variables into numeric values because they are not binary or ordinal. This is why a mean could not be calculated and conversion results in error. 
+
+Factor variable could not have mean calculated initially because integer codes were not assigned. The conversion did that, allowing the calculation to occur.
+
+
+
+
+
+
+
+
+
